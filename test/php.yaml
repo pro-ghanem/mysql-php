@@ -1,11 +1,26 @@
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: php
+  labels:
+    run: php
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    protocol: TCP
+  selector:
+    app: apache
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: webserver
+  name: php
   labels:
     app: apache
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: apache
@@ -16,14 +31,6 @@ spec:
     spec:
       containers:
       - name: php-apache
-        image: learningk8s_website
-        imagePullPolicy: Never
+        image: ahmedghanem/php
         ports:
         - containerPort: 80
-        volumeMounts:
-        - name: hostvol
-          mountPath: /var/www/html/
-      volumes:
-        - name: hostvol
-          hostPath:
-            path: /data
